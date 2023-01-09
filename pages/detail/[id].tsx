@@ -24,6 +24,8 @@ const Detail = ({ postDetails }: IProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
   const { userProfile }: any = useAuthStore();
+  const [comment, setComment] = useState("");
+  const [isPostingComment, setIsPostingComment] = useState(false);
 
   const onVideoClick = () => {
     if (playing) {
@@ -53,14 +55,31 @@ const Detail = ({ postDetails }: IProps) => {
     }
   };
 
+  const addComment = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+
+    if (userProfile && comment) {
+      setIsPostingComment(true);
+
+      const { data } = await axios.put(`${BASE_URL}/api/post/${post._id}`, {
+        userId: userProfile._id,
+        comment,
+      });
+
+      setPost({ ...post, comments: data.comments });
+      setComment("");
+      setIsPostingComment(false);
+    }
+  };
+
   if (!post) return null;
 
   return (
     <div className="flex w-full absolute left-0 top-0 bg-white flex-wrap lg:flex-nowrap">
       <div className="relative flex-2 w-[1000px] lg:w-9/12 flex justify-center items-center bg-blurred-img bg-no-repeat bg-cover bg-center">
-        <div className="absolute top-6 left-2 lg:left-6 flex gap-6 z-50">
+        <div className="opacity-90 absolute top-6 left-2 lg:left-6 flex gap-6 z-50">
           <p className="cursor-pointer" onClick={() => router.back()}>
-            <MdOutlineCancel className="text-white text-[35px]" />
+            <MdOutlineCancel className="text-white text-[35px] hover:opacity-90" />
           </p>
         </div>
         <div className="relative">
@@ -73,7 +92,7 @@ const Detail = ({ postDetails }: IProps) => {
               className="h-full cursor-pointer"
             ></video>
           </div>
-          <div className="absolute top-[45%] left-[45%] cursor-pointer">
+          <div className="absolute top-[45%] left-[40%] cursor-pointer">
             {!playing && (
               <button onClick={onVideoClick}>
                 <BsFillPlayFill className="text-white text-6xl lg:text-8xl" />
@@ -137,7 +156,13 @@ const Detail = ({ postDetails }: IProps) => {
               />
             )}
           </div>
-          <Comments />
+          <Comments 
+            comment={comment}
+            setComment={setComment}
+            addComment={addComment}
+            comments={post.comments}
+            isPostingComment={isPostingComment}
+          />
         </div>
       </div>
     </div>
