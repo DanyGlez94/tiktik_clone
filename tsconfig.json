@@ -15,6 +15,15 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/profile/[id].js", "pages/search/[searchTerm].js"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "pages/profile/[id].js",
+    "pages/search/[searchTerm].js"
+  ],
+  "exclude": ["node_modules"],
+  "paths": {
+    "react": ["node_modules/@types/react"]
+  }
 }
