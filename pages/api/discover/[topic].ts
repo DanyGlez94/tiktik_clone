@@ -7,7 +7,12 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "GET") {
-    const { topic } = req.query;
+    const topic = req.query.topic as string | undefined;
+
+    if (!topic) {
+      res.status(400).json({ message: "Missing topic" });
+      return;
+    }
 
     const videosQuery = topicPostsQuery(topic);
 

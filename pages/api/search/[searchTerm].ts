@@ -7,7 +7,12 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "GET") {
-    const { searchTerm } = req.query;
+    const searchTerm = req.query.searchTerm as string | undefined;
+
+    if (!searchTerm) {
+      res.status(400).json({ message: "Missing searchTerm" });
+      return;
+    }
 
     const videosQuery = searchPostsQuery(searchTerm);
 

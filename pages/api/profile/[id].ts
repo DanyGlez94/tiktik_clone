@@ -11,7 +11,12 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "GET") {
-    const { id } = req.query;
+    const id = req.query.id as string | undefined;
+
+    if (!id) {
+      res.status(400).json({ message: "Missing id" });
+      return;
+    }
 
     const query = singleUserQuery(id);
     const userVideosQuery = userCreatedPostsQuery(id);
